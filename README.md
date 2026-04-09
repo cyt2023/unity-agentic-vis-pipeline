@@ -44,17 +44,55 @@ The current execution path is:
 `workflow JSON -> data path resolution -> runtime operator execution -> backend-result adaptation -> existing Unity renderer`
 
 Primary integrated test assets:
-- `Assets/StreamingAssets/test3_workflow.json`
-- `Assets/StreamingAssets/demo_data/hurricane_sandy_2012_100k_sample.csv`
-- `Assets/Scripts/Integration/Runtime/WorkflowRuntimeDemoController.cs`
+- `Assets/StreamingAssets/Agentic/Workflows/test3_workflow.json`
+- `Assets/StreamingAssets/Agentic/Data/hurricane_sandy_2012_100k_sample.csv`
+- `Assets/Scripts/Agentic/Unity/WorkflowRuntimeDemoController.cs`
 
 ## Main Runtime Additions
 
 The main additions for the agentic workflow path are:
-- `Assets/Scripts/WorkflowRuntime/*`
-- `Assets/Scripts/Integration/Runtime/*`
+- `Assets/Scripts/Agentic/Operators/*`
+- `Assets/Scripts/Agentic/Unity/*`
 
 These additions allow Unity to read an EvoFlow-style workflow description, execute the selected operator chain, and pass the result to the existing frontend rendering pipeline.
+
+## Folder Guide
+
+- `Assets/AdaptedIATK/`
+  Adapted IATK rendering foundation reused from the original project.
+
+- `Assets/IATK-Plugins/`
+  Third-party plugins and supporting packages required by the rendering stack.
+
+- `Assets/MinorAssets/`
+  External or supporting Unity assets used by the project.
+
+- `Assets/Resources/`
+  Unity resources loaded through the Resources system, including bundled data and materials.
+
+- `Assets/StreamingAssets/`
+  Runtime-readable files that Unity can access directly from disk.
+
+- `Assets/StreamingAssets/Agentic/Workflows/`
+  Standardized workflow JSON files used to drive the agentic execution path.
+
+- `Assets/StreamingAssets/Agentic/Data/`
+  Local test datasets referenced by workflow JSON files.
+
+- `Assets/Scripts/Integration/`
+  Existing Unity-side frontend integration, mapping, and rendering pipeline reused from the reduced TaxiVis frontend work.
+
+- `Assets/Scripts/Agentic/Unity/`
+  Unity-facing controllers and adapters for the new workflow execution path.
+
+- `Assets/Scripts/Agentic/Operators/`
+  Runtime operator implementation grouped by responsibility: `Core`, `Data`, `View`, `Query`, `Filter`, `Backend`, and `Runner`.
+
+- `Assets/ProjectLogs/`
+  Project log files mirrored inside Unity assets for in-project reference.
+
+- `ProjectLogs/`
+  Top-level implementation logs documenting development batches and integration progress.
 
 ## How To Test The Current Workflow Path
 
@@ -65,7 +103,7 @@ Recommended environment:
 Current test flow:
 1. Open the Unity project.
 2. Use the workflow runtime demo entry point in a scene.
-3. Point it to `Assets/StreamingAssets/test3_workflow.json` or keep the default setting.
+3. Point it to `Assets/StreamingAssets/Agentic/Workflows/test3_workflow.json` or keep the default setting.
 4. Run the scene.
 5. Verify that Unity resolves the CSV path, executes the operator workflow, and renders the point-based result.
 
