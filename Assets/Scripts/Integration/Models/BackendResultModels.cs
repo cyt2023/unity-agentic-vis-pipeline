@@ -97,4 +97,19 @@ namespace ImmersiveTaxiVis.Integration.Models
         public int selectedPointCount;
         public bool backendBuilt;
     }
+
+    [Serializable]
+    public class BackendErrorEnvelope
+    {
+        public string status;
+        public BackendErrorBody error;
+    }
+
+    [Serializable]
+    public class BackendErrorBody
+    {
+        public string stage;
+        public string message;
+        public string details;
+    }
 }

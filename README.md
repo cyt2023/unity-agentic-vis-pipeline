@@ -1,8 +1,8 @@
-# Immersive TaxiVis / Agentic Visualization Pipeline
+# EvoVis Studio
 
 ## Overview
 
-This repository is built on top of the original *Immersive TaxiVis* Unity research prototype and extends it into an agentic, JSON-driven visualization pipeline.
+This repository is the Unity desktop frontend of *EvoVis Studio*, a new agentic visualization project built on top of the original *Immersive TaxiVis* research prototype.
 
 The current work keeps the original project’s most important visualization-core ideas:
 - OD trip data as the main data model
@@ -39,14 +39,19 @@ The current focus is not on restoring the original immersive shell features such
 
 ## Current Agentic Workflow Path
 
-The current execution path is:
+The current embedded execution path is:
 
 `workflow JSON -> data path resolution -> runtime operator execution -> backend-result adaptation -> existing Unity renderer`
+
+The preferred desktop-app direction is now a local backend-service path:
+
+`Unity desktop app -> local EvoFlow backend service -> Unity-ready render JSON -> existing Unity renderer`
 
 Primary integrated test assets:
 - `Assets/StreamingAssets/Agentic/Workflows/test3_workflow.json`
 - `Assets/StreamingAssets/Agentic/Data/hurricane_sandy_2012_100k_sample.csv`
 - `Assets/Scripts/Agentic/Unity/WorkflowRuntimeDemoController.cs`
+- `Assets/Scripts/Agentic/Unity/BackendServiceRenderController.cs`
 
 ## Main Runtime Additions
 
@@ -55,6 +60,62 @@ The main additions for the agentic workflow path are:
 - `Assets/Scripts/Agentic/Unity/*`
 
 These additions allow Unity to read an EvoFlow-style workflow description, execute the selected operator chain, and pass the result to the existing frontend rendering pipeline.
+
+
+## Local Backend Service Mode
+
+The desktop-app architecture can also run with EvoFlow as a local backend service. In this mode, Unity is the desktop visualization frontend, while the backend service returns workflow or render JSON over HTTP.
+
+Backend project path:
+
+`../OperatorsDraft`
+
+Start the backend service from the parent workspace:
+
+```bash
+cd ../OperatorsDraft
+./run_backend_server.sh
+```
+
+Available local endpoints:
+- `GET http://127.0.0.1:8000/api/health`
+- `GET http://127.0.0.1:8000/api/workflow/test3`
+- `GET http://127.0.0.1:8000/api/render/test3`
+
+Unity-side entry point:
+- `Assets/Scripts/Agentic/Unity/BackendServiceRenderController.cs`
+
+This path avoids treating Unity as the main operator runtime. Unity requests a backend result from EvoFlow and then renders the returned JSON through the existing frontend pipeline.
+
+
+## Desktop App Mode
+
+The current project can be assembled as a local desktop app rather than a browser application. In this mode, Unity is the desktop frontend, and EvoFlow runs as a local backend process.
+
+Recommended runtime chain:
+
+`DesktopAgenticAppBootstrap -> DesktopBackendServiceController -> BackendCommandWindowController -> local EvoFlow backend -> Unity renderer`
+
+Key desktop-app scripts:
+- `Assets/Scripts/Agentic/Unity/DesktopAgenticAppBootstrap.cs`
+- `Assets/Scripts/Agentic/Unity/DesktopBackendServiceController.cs`
+- `Assets/Scripts/Agentic/Unity/BackendCommandWindowController.cs`
+- `Assets/Scripts/Integration/Editor/FrontendDemoSceneCreator.cs`
+
+What this adds:
+- Unity can auto-start the local EvoFlow backend on desktop builds and in the Editor.
+- The in-app command window can start, restart, and stop the owned backend process.
+- The frontend can wait for backend health before requesting render JSON.
+- Unity Editor now has menu entries to create/open a dedicated desktop agentic app scene.
+
+Packaging note:
+- In the current workspace layout, `unity-agentic-vis-pipeline` and `OperatorsDraft` are sibling folders.
+- For a standalone build, keep an `OperatorsDraft` folder next to the built Unity app, or copy the backend into `StreamingAssets/EvoFlowBackend`.
+- On Windows, `OperatorsDraft/run_backend_server.bat` is provided for local process launch.
+
+## Workspace Docs
+
+Workspace-level Chinese documentation is organized under `Docs/Workspace/`. Backend-side research notes are organized under `../OperatorsDraft/Docs/`.
 
 ## Folder Guide
 
